@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coating CPK Lab</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Lithium-ion Manufacturing Data Tool</p>
+      <h1>Coating CPK Lab</h1>
+      <p class="subtitle">
+        面向锂电涂布、β-ray、CCD 与 MES 数据的 CPK 实验台：模拟异常、计算能力、识别波动模式，并生成 FACA 草稿。
+      </p>
+    </div>
+    <div class="hero-card">
+      <span id="statusBadge" class="badge">Ready</span>
+      <strong id="cpkHero">Cpk --</strong>
+      <small id="heroHint">点击“生成模拟数据”开始</small>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel controls">
+      <h2>1. 参数设定</h2>
+
+      <div class="grid two">
+        <label>指标名称
+          <input id="metricName" value="负极涂布面密度" />
+        </label>
+        <label>样本数量
+          <input id="sampleSize" type="number" min="30" max="3000" value="240" />
+        </label>
+        <label>规格下限 LSL
+          <input id="lsl" type="number" step="0.01" value="60.50" />
+        </label>
+        <label>规格上限 USL
+          <input id="usl" type="number" step="0.01" value="65.50" />
+        </label>
+        <label>目标值 Target
+          <input id="target" type="number" step="0.01" value="63.00" />
+        </label>
+        <label>基础 σ
+          <input id="sigma" type="number" step="0.01" value="0.42" />
+        </label>
+      </div>
+
+      <div class="slider">
+        <label>中心偏移 <span id="offsetOut">0.00</span></label>
+        <input id="offset" type="range" min="-2" max="2" step="0.05" value="0" />
+      </div>
+
+      <div class="slider">
+        <label>趋势漂移强度 <span id="driftOut">0.25</span></label>
+        <input id="drift" type="range" min="-2" max="2" step="0.05" value="0.25" />
+      </div>
+
+      <div class="slider">
+        <label>泵/阀磨损强度 <span id="wearOut">0.20</span></label>
+        <input id="wear" type="range" min="0" max="1.5" step="0.05" value="0.20" />
+      </div>
+
+      <div class="slider">
+        <label>气泡/漏箔冲击概率 <span id="burstOut">2.0%</span></label>
+        <input id="burst" type="range" min="0" max="12" step="0.5" value="2" />
+      </div>
+
+      <div class="button-row">
+        <button id="generateBtn">生成模拟数据</button>
+        <button id="analyzeBtn" class="secondary">重新分析</button>
+        <button id="exportBtn" class="secondary">导出 CSV</button>
+      </div>
+
+      <label class="file">
+        导入 CSV
+        <input id="fileInput" type="file" accept=".csv,text/csv" />
+      </label>
+    </section>
+
+    <section class="panel">
+      <h2>2. 能力摘要</h2>
+      <div class="cards">
+        <article><span>Mean</span><strong id="meanCard">--</strong></article>
+        <article><span>Sigma</span><strong id="sigmaCard">--</strong></article>
+        <article><span>Cp</span><strong id="cpCard">--</strong></article>
+        <article><span>Cpk</span><strong id="cpkCard">--</strong></article>
+        <article><span>OOS</span><strong id="oosCard">--</strong></article>
+        <article><span>OOS PPM</span><strong id="ppmCard">--</strong></article>
+      </div>
+
+      <div id="diagnosis" class="diagnosis">
+        生成或导入数据后，将自动输出过程能力判断、异常模式和建议动作。
+      </div>
+    </section>
+
+    <section class="panel chart-panel">
+      <h2>3. 趋势图</h2>
+      <svg id="trendChart" viewBox="0 0 920 320" role="img" aria-label="趋势图"></svg>
+    </section>
+
+    <section class="panel chart-panel">
+      <h2>4. 分布图</h2>
+      <svg id="histChart" viewBox="0 0 920 300" role="img" aria-label="分布图"></svg>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <h2>5. FACA 草稿</h2>
+        <button id="copyFacaBtn" class="secondary">复制 FACA</button>
+      </div>
+      <pre id="facaBox">暂无 FACA 内容。</pre>
+    </section>
+
+    <section class="panel">
+      <h2>6. 数据预览</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Time</th>
+              <th>Value</th>
+              <th>Tag</th>
+            </tr>
+          </thead>
+          <tbody id="dataTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Built for process engineers who need fast, explainable CPK judgment.
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
